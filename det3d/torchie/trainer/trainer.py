@@ -370,7 +370,7 @@ class Trainer(object):
             del losses
 
             outputs = dict(
-                loss=loss, log_vars=log_vars, num_samples=-1  # TODO: FIX THIS
+                loss=loss, log_vars=log_vars, num_samples=len(example["metadata"])
             )
             self.call_hook("after_parse_loss")
 

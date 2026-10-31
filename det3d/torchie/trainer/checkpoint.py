@@ -6,6 +6,7 @@ import warnings
 from collections import OrderedDict
 from importlib import import_module
 
+import numpy as np
 import torch
 import torchvision
 from det3d import torchie
@@ -198,7 +199,19 @@ def load_checkpoint(model, filename, map_location='cpu', strict=False, logger=No
     else:
         if not osp.isfile(filename):
             raise IOError("{} is not a checkpoint file".format(filename))
-        checkpoint = torch.load(filename, map_location=map_location)
+        if hasattr(torch.serialization, "safe_globals"):
+            numpy_types = [
+                np.core.multiarray.scalar,
+                np.dtype,
+                type(np.dtype(np.float64)),
+                type(np.dtype(np.float32)),
+                type(np.dtype(np.int64)),
+                type(np.dtype(np.int32)),
+            ]
+            with torch.serialization.safe_globals(numpy_types):
+                checkpoint = torch.load(filename, map_location=map_location)
+        else:
+            checkpoint = torch.load(filename, map_location=map_location)
     # get state_dict from checkpoint
     if isinstance(checkpoint, OrderedDict):
         state_dict = checkpoint

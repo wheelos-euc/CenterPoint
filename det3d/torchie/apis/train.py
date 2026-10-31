@@ -106,7 +106,7 @@ def batch_processor(model, data, train_mode, **kwargs):
         loss, log_vars = parse_second_losses(losses)
 
         outputs = dict(
-            loss=loss, log_vars=log_vars, num_samples=len(example["anchors"][0])
+            loss=loss, log_vars=log_vars, num_samples=len(example["metadata"])
         )
         return outputs
     else:
